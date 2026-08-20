@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#171008" />
+  <title>LAN Drop — mesa de despacho</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='3' fill='%23b23a2e'/%3E%3Cpath d='M5 12h14M13 6l6 6-6 6' stroke='%23e4cfa0' stroke-width='2' fill='none' stroke-linecap='square' stroke-linejoin='miter'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!--
+  THESIS: LAN Drop is a dispatch desk, not a SaaS panel — every file is a
+  shipment labeled, sent, and stamped delivered only once its checksum is
+  verified, refusing the dark-gradient dashboard default entirely.
+  OWN-WORLD: lit like a dispatch clerk's desk lamp at any hour — dark desk
+  ground, kraft-paper documents, stamp-red for action, transit-blue for
+  in-progress, verified-green ink for success; self-hosted Special Elite for
+  the stamped voice, Courier New for manifest data, system sans for body
+  copy.
+  STORY: the visitor reads the network as a manifest, fills a shipping label
+  to send, and watches a real stamp land only after the receiver confirms the
+  file arrived intact.
+  FIRST VIEWPORT: a desk holding three distinct documents — a clipboard of
+  recipients, a perforated shipping label with the send action, and a
+  delivery ledger below — never three matching cards.
+  FORM: Manifesto Postal, candidate 4 of 7 grounded directions (patch panel,
+  radar, departure board, postal manifest, terminal/CRT, CB radio, conveyor
+  belt); seed key a7467570. Raised: ticked-counter progress discipline
+  (film-rail challenger), single accent-for-action discipline (consumer-app
+  challenger).
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the
+  finish review, the verdict, DESIGN.md, and every shipping raster carrying
+  its provenance.
+  -->
+  <div class="desk">
+    <header class="desk-header">
+      <div class="wordmark">
+        <svg class="wordmark-seal" viewBox="0 0 32 32" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" stroke-linejoin="miter">
+          <rect x="2" y="2" width="28" height="28" rx="2" />
+          <path d="M9 16h14M17 10l6 6-6 6" />
+        </svg>
+        <div class="wordmark-text">
+          <span class="wordmark-title">LAN Drop</span>
+          <span class="wordmark-sub">mesa de despacho local</span>
+        </div>
+      </div>
+
+      <div class="sender-field">
+        <span class="sender-label">de:</span>
+        <input id="deviceName" class="sender-input" type="text" maxlength="60" spellcheck="false" />
+        <span class="sender-code" id="deviceAddress">--</span>
+      </div>
+    </header>
+
+    <main class="desk-surface">
+      <section class="clipboard" aria-labelledby="registry-title">
+        <div class="clipboard-clip" aria-hidden="true"></div>
+        <h2 id="registry-title" class="doc-title">Registro de destinatários</h2>
+        <p class="doc-hint">Abra o LAN Drop em outro aparelho da mesma rede para que ele entre no registro.</p>
+        <ul id="deviceList" class="manifest-list">
+          <li class="manifest-empty">
+            <span class="listen-blip" aria-hidden="true"></span>
+            Ouvindo a rede por outros aparelhos&hellip;
+          </li>
+        </ul>
+      </section>
+
+      <section class="ship-label" aria-labelledby="label-title">
+        <span class="punch-hole" aria-hidden="true"></span>
+        <h2 id="label-title" class="doc-title">Nova remessa</h2>
+
+        <div id="dropZone" class="label-content">
+          <svg class="parcel-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" stroke-linejoin="miter">
+            <path d="M12 3l9 5v8l-9 5-9-5V8z" />
+            <path d="M3 8l9 5 9-5M12 13v8" />
+          </svg>
+          <p class="label-line">Solte o arquivo aqui</p>
+          <p class="label-or">ou</p>
+          <label class="file-picker">
+            escolher arquivo
+            <input id="fileInput" type="file" hidden />
+          </label>
+          <p id="selectedFile" class="selected-file"></p>
+        </div>
+
+        <button id="sendBtn" class="dispatch-btn" disabled>
+          <span>Despachar</span>
+        </button>
+
+        <div id="transfers" class="transfers"></div>
+      </section>
+
+      <section class="ledger" aria-labelledby="ledger-title">
+        <div class="ledger-head">
+          <h2 id="ledger-title" class="doc-title">Manifesto de entregas</h2>
+          <div class="ledger-cols" aria-hidden="true">
+            <span>arquivo</span>
+            <span>origem</span>
+            <span>status</span>
+            <span></span>
+          </div>
+        </div>
+        <ul id="receivedList" class="ledger-list">
+          <li class="ledger-empty">Nenhuma remessa recebida ainda.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="postmark">
+      <span>— LAN Drop · projeto 01/50 · sem nuvem, sem cabos —</span>
+    </footer>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

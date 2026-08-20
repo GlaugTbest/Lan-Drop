@@ -1,0 +1,18 @@
+{
+  "name": "lan-drop",
+  "version": "1.0.0",
+  "description": "Transferencia direta de arquivos entre dispositivos na mesma rede local, sem nuvem, sem cabos.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^2.0.0",
+    "socket.io": "^4.7.5"
+  }
+}

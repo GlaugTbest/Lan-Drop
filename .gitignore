@@ -1,0 +1,9 @@
+node_modules/
+uploads/
+received/*
+!received/.gitkeep
+config.json
+npm-debug.log
+.impeccable/config.local.json
+.claude/
+.codex/
