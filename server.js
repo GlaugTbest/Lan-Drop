@@ -18,7 +18,7 @@ for (const dir of [RECEIVED_DIR, UPLOADS_DIR]) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
-const identity = deviceIdentity.load();
+const identity = deviceIdentity.load(HTTP_PORT);
 const localIp = deviceIdentity.getLocalIp();
 
 const app = express();
@@ -51,7 +51,7 @@ app.post('/api/name', express.json(), (req, res) => {
   const name = (req.body?.name || '').trim();
   if (!name) return res.status(400).json({ error: 'Nome invalido.' });
   identity.name = name.slice(0, 60);
-  deviceIdentity.save(identity);
+  deviceIdentity.save(identity, HTTP_PORT);
   res.json({ ok: true, name: identity.name });
 });
 

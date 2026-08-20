@@ -145,7 +145,7 @@ function createTicket(transferId, filename, targetName) {
       <span class="ticket-file">${filename} → ${targetName}</span>
       <span class="ticket-status">despachando&hellip;</span>
     </div>
-    <div class="tick-track"><div class="tick-fill" style="width:0%"></div></div>
+    <div class="tick-track"><div class="tick-fill"></div></div>
   `;
   transfersEl.prepend(ticket);
   return ticket;
@@ -156,32 +156,52 @@ sendBtn.addEventListener('click', () => {
   const target = devices.find((d) => d.id === selectedDeviceId);
   if (!target) return;
 
+  // Snapshot everything the async xhr callbacks will need up front —
+  // selectedFile/selectedDeviceId are reset right after xhr.send() below,
+  // so referencing the globals later would read stale/null values.
+  const file = selectedFile;
+  const fileName = file.name;
+  const targetName = target.name;
+
   const formData = new FormData();
-  formData.append('file', selectedFile);
+  formData.append('file', file);
   formData.append('targetId', selectedDeviceId);
   formData.append('socketId', socket.id);
 
   const xhr = new XMLHttpRequest();
   xhr.open('POST', '/api/send');
 
-  let ticket = null;
+  const ticket = createTicket(null, fileName, targetName);
 
   xhr.upload.addEventListener('progress', (e) => {
     if (!e.lengthComputable) return;
     const percent = Math.round((e.loaded / e.total) * 50); // leg 1 = first half of the track
-    if (ticket) setTickFill(ticket, percent);
+    setTickFill(ticket, percent);
   });
 
   xhr.addEventListener('load', () => {
     if (xhr.status !== 200) {
-      alert('Não foi possível iniciar o despacho.');
+      ticket.classList.add('error');
+      ticket.querySelector('.ticket-status').textContent = 'não foi possível iniciar o despacho';
       return;
     }
-    const response = JSON.parse(xhr.responseText);
-    const transferId = response.transferId;
-    ticket = createTicket(transferId, selectedFile.name, target.name);
+    let response;
+    try {
+      response = JSON.parse(xhr.responseText);
+    } catch {
+      ticket.classList.add('error');
+      ticket.querySelector('.ticket-status').textContent = 'resposta inválida do servidor';
+      return;
+    }
+    ticket.id = `transfer-${response.transferId}`;
     setTickFill(ticket, 50);
-    pendingTickets[transferId] = ticket;
+    ticket.querySelector('.ticket-status').textContent = 'em trânsito…';
+    pendingTickets[response.transferId] = ticket;
+  });
+
+  xhr.addEventListener('error', () => {
+    ticket.classList.add('error');
+    ticket.querySelector('.ticket-status').textContent = 'falha de rede ao despachar';
   });
 
   xhr.send(formData);

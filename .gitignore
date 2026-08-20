@@ -3,6 +3,7 @@ uploads/
 received/*
 !received/.gitkeep
 config.json
+config-*.json
 npm-debug.log
 .impeccable/config.local.json
 .claude/

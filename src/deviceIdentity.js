@@ -3,12 +3,24 @@ const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 
-const CONFIG_PATH = path.join(__dirname, '..', 'config.json');
+const DEFAULT_PORT = 4000;
 
-function load() {
-  if (fs.existsSync(CONFIG_PATH)) {
+// Two instances started from the same folder on the same machine (e.g. to
+// test send/receive locally before having a second physical device) must
+// not share an identity file: discovery filters out a peer whose id matches
+// this.id, so two instances with the same id silently ignore each other.
+// The default port keeps the plain `config.json` name so existing installs
+// aren't orphaned; any other port gets its own file.
+function configPath(port) {
+  const suffix = port && port !== DEFAULT_PORT ? `-${port}` : '';
+  return path.join(__dirname, '..', `config${suffix}.json`);
+}
+
+function load(port) {
+  const configPath_ = configPath(port);
+  if (fs.existsSync(configPath_)) {
     try {
-      return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+      return JSON.parse(fs.readFileSync(configPath_, 'utf8'));
     } catch {
       // fall through to regenerate a fresh identity
     }
@@ -17,12 +29,12 @@ function load() {
     id: crypto.randomUUID(),
     name: os.hostname() || 'Dispositivo LAN Drop'
   };
-  save(identity);
+  save(identity, port);
   return identity;
 }
 
-function save(identity) {
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(identity, null, 2));
+function save(identity, port) {
+  fs.writeFileSync(configPath(port), JSON.stringify(identity, null, 2));
 }
 
 function getLocalIp() {
